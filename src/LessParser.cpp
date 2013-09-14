@@ -147,9 +147,9 @@ bool LessParser::parseRuleset (Stylesheet* stylesheet,
   // In case of a parameter ruleset the declaration values are not
   // processed until later.
   if (ParameterRuleset::isValid(selector)) {
-    if (parent != NULL)
-      cerr << "Warning: Parametric ruleset defined inside another \
-parametric ruleset." << endl;
+	if (parent != NULL);
+      //SM! cerr << "Warning: Parametric ruleset defined inside another \
+	// parametric ruleset." << endl;
     ruleset = pruleset = new ParameterRuleset(selector);
     pRulesets->addRule(pruleset);
     while (parseRulesetStatement(stylesheet, ruleset, pruleset)) {

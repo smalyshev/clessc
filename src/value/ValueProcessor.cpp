@@ -110,7 +110,7 @@ void ValueProcessor::putVariable(string key, TokenList* value) {
   // check if variable is alread declared
   mit = scope->find(key);
   if (mit != scope->end()) {
-    cerr << "Warning: Variable " << key << " defined twice in same scope." << endl;
+    //!SM cerr << "Warning: Variable " << key << " defined twice in same scope." << endl;
   }
   scope->insert(pair<string, TokenList*>(key, value));
 }
