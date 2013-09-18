@@ -43,26 +43,11 @@ PHP_RSHUTDOWN_FUNCTION(less);
 PHP_MINFO_FUNCTION(less);
 
 PHP_FUNCTION(less_compile);
-
-/* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
+PHP_FUNCTION(less_error);
 
 ZEND_BEGIN_MODULE_GLOBALS(less)
-	long  global_value;
-	char *global_string;
+	char *last_error;
 ZEND_END_MODULE_GLOBALS(less)
-*/
-
-/* In every utility function you add that needs to use variables 
-   in php_less_globals, call TSRMLS_FETCH(); after declaring other 
-   variables used by that function, or better yet, pass in TSRMLS_CC
-   after the last function argument and declare your utility function
-   with TSRMLS_DC after the last declared argument.  Always refer to
-   the globals in your function as LESS_G(variable).  You are 
-   encouraged to rename these macros something shorter, see
-   examples in any other php module directory.
-*/
 
 #ifdef ZTS
 #define LESS_G(v) TSRMG(less_globals_id, zend_less_globals *, v)

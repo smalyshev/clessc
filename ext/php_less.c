@@ -27,19 +27,17 @@
 #include "ext/standard/info.h"
 #include "php_less.h"
 
-/* If you declare any globals in php_less.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(less)
-*/
 
 /* True global resources - no need for thread safety here */
 static int le_less;
 
 /* {{{ less_functions[]
  *
- * Every user visible function must have an entry in less_functions[].
  */
 const zend_function_entry less_functions[] = {
 	PHP_FE(less_compile,	NULL)		
+	PHP_FE(less_error,	NULL)		
 	PHP_FE_END	/* Must be the last line in less_functions[] */
 };
 /* }}} */
@@ -80,13 +78,10 @@ PHP_INI_END()
 
 /* {{{ php_less_init_globals
  */
-/* Uncomment this function if you have INI entries
 static void php_less_init_globals(zend_less_globals *less_globals)
 {
-	less_globals->global_value = 0;
-	less_globals->global_string = NULL;
+	less_globals->last_error = NULL;
 }
-*/
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION
@@ -116,6 +111,7 @@ PHP_MSHUTDOWN_FUNCTION(less)
  */
 PHP_RINIT_FUNCTION(less)
 {
+	LESS_G(last_error) = NULL;
 	return SUCCESS;
 }
 /* }}} */
@@ -125,6 +121,10 @@ PHP_RINIT_FUNCTION(less)
  */
 PHP_RSHUTDOWN_FUNCTION(less)
 {
+	if(LESS_G(last_error)) {
+		efree(LESS_G(last_error));
+		LESS_G(last_error) = NULL;
+	}
 	return SUCCESS;
 }
 /* }}} */
@@ -144,7 +144,7 @@ PHP_MINFO_FUNCTION(less)
 /* }}} */
 
 
-/* {{{ proto string compile_less(string arg)
+/* {{{ proto string less_compile(string arg)
    Compile LESS string */
 PHP_FUNCTION(less_compile)
 {
@@ -157,11 +157,33 @@ PHP_FUNCTION(less_compile)
 		return;
 	}
 	
+	if(LESS_G(last_error)) {
+		efree(LESS_G(last_error));
+		LESS_G(last_error) = NULL;
+	}
+	
 	if(process_lessc(arg, arg_len, &out, &out_len) != SUCCESS) {
+		LESS_G(last_error) = out;
 		RETURN_FALSE;
 	}
 
 	RETURN_STRINGL(out, out_len, 0);
+}
+/* }}} */
+
+/* {{{ proto string less_error()
+   Compile LESS string */
+PHP_FUNCTION(less_error)
+{
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+	if(LESS_G(last_error)) {
+		RETVAL_STRING(LESS_G(last_error), 0);
+		LESS_G(last_error) = NULL;
+		return;
+	}
+	RETURN_EMPTY_STRING();
 }
 /* }}} */
 

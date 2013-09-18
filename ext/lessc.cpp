@@ -54,7 +54,7 @@ Stylesheet* processInput(istream* in){
   } catch(const exception* e) {
 	ostringstream errs;
     errs << "Line " << tokenizer.getLineNumber() << ", Column " << 
-      tokenizer.getColumn() << " Parse Error: " << e->what() << endl;
+      tokenizer.getColumn() << " Parse Error: " << e->what();
 	throw runtime_error(errs.str());
   }
   
@@ -86,6 +86,7 @@ int process_lessc(const char *input, int input_len, char **output, int *output_l
 			return SUCCESS;
 		}
 	} catch(const exception &e) {
+		*output = estrdup(e.what());
 		// should save in global for later reporting
 	}
 	return FAILURE;
